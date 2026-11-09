@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" class="scroll-smooth dark">
+<html lang="ru" class="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -169,19 +169,40 @@
             }
         }
 
-        /* Glassmorphism Cards */
+        /* Glassmorphism Cards - 120 FPS GPU Optimized */
         .figma-card {
             background: var(--card-glass);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1.5px solid var(--card-border);
             border-radius: 18px;
             box-shadow: var(--card-shadow);
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            contain: layout style;
+        }
+
+        @media (min-width: 1024px) {
+            .figma-card {
+                backdrop-filter: blur(22px) saturate(160%);
+                -webkit-backdrop-filter: blur(22px) saturate(160%);
+            }
         }
 
         .figma-header {
             background: transparent;
             border-bottom: none;
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .figma-action-btn {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         /* Input capsule */
@@ -965,7 +986,73 @@
             slider.style.background = `linear-gradient(to right, #10B981 0%, #10B981 ${percentage}%, ${emptyColor} ${percentage}%, ${emptyColor} 100%)`;
         }
 
-        function updateCalculator(updatePrice = true, updateDown = true, updateTerm = true, resetDownToMin = false) {
+        // Physics-based exponential lerp number animator (120 FPS ProMotion ready)
+        const numberAnimators = new WeakMap();
+
+        function animateValue(element, targetValue, suffix = ' ₽', immediate = false) {
+            if (!element) return;
+            targetValue = Math.round(targetValue);
+            
+            let state = numberAnimators.get(element);
+            if (!state) {
+                const attr = element.getAttribute('data-val');
+                let current = attr !== null ? parseFloat(attr) : targetValue;
+                if (isNaN(current)) current = targetValue;
+                state = { current, target: targetValue, rafId: null, lastTime: null, suffix };
+                numberAnimators.set(element, state);
+            }
+            
+            state.target = targetValue;
+            state.suffix = suffix;
+
+            if (immediate) {
+                if (state.rafId) { cancelAnimationFrame(state.rafId); state.rafId = null; }
+                state.current = targetValue;
+                element.innerText = `${targetValue.toLocaleString('ru-RU')}${suffix}`;
+                element.setAttribute('data-val', targetValue);
+                return;
+            }
+
+            if (Math.abs(state.target - state.current) < 1 && !state.rafId) {
+                element.innerText = `${targetValue.toLocaleString('ru-RU')}${suffix}`;
+                element.setAttribute('data-val', targetValue);
+                return;
+            }
+
+            if (!state.rafId) {
+                state.lastTime = performance.now();
+                const step = (now) => {
+                    const dt = Math.min((now - state.lastTime) / 1000, 0.05);
+                    state.lastTime = now;
+                    const blend = 1 - Math.exp(-26 * dt);
+                    state.current += (state.target - state.current) * blend;
+
+                    if (Math.abs(state.target - state.current) < 1.5) {
+                        state.current = state.target;
+                        element.innerText = `${state.target.toLocaleString('ru-RU')}${state.suffix}`;
+                        element.setAttribute('data-val', state.target);
+                        state.rafId = null;
+                    } else {
+                        element.innerText = `${Math.round(state.current).toLocaleString('ru-RU')}${state.suffix}`;
+                        element.setAttribute('data-val', Math.round(state.current));
+                        state.rafId = requestAnimationFrame(step);
+                    }
+                };
+                state.rafId = requestAnimationFrame(step);
+            }
+        }
+
+        // 120 FPS Coalesced Slider RAF Pipeline
+        let sliderRafId = null;
+        function queueSliderUpdate(updatePrice = true, updateDown = true, updateTerm = true, resetDownToMin = false) {
+            if (sliderRafId) return;
+            sliderRafId = requestAnimationFrame(() => {
+                updateCalculator(updatePrice, updateDown, updateTerm, resetDownToMin, false);
+                sliderRafId = null;
+            });
+        }
+
+        function updateCalculator(updatePrice = true, updateDown = true, updateTerm = true, resetDownToMin = false, immediate = false) {
             const price = currentPrice;
             const months = currentTerm;
 
@@ -1023,9 +1110,9 @@
             const principal = total - down;
             const monthly = Math.round(principal / months);
 
-            markupEl.innerText = `${markup.toLocaleString('ru-RU')} ₽`;
-            totalEl.innerText = `${total.toLocaleString('ru-RU')} ₽`;
-            monthlyEl.innerText = `${monthly.toLocaleString('ru-RU')} ₽`;
+            animateValue(markupEl, markup, ' ₽', immediate);
+            animateValue(totalEl, total, ' ₽', immediate);
+            animateValue(monthlyEl, monthly, ' ₽', immediate);
 
             updateSliderTrack(priceSlider);
             updateSliderTrack(termSlider);
@@ -1042,7 +1129,7 @@
                 tabWithDown.classList.add('active');
                 tabNoDown.classList.remove('active');
                 downPaymentWrapper.classList.add('expanded');
-                updateCalculator(true, true, true, true);
+                updateCalculator(true, true, true, true, true);
             } else {
                 tabSlider.classList.add('is-right');
                 tabNoDown.classList.add('active');
@@ -1051,7 +1138,7 @@
                 if (currentPrice > MAX_PRICE_NO_DOWN) {
                     currentPrice = MAX_PRICE_NO_DOWN;
                 }
-                updateCalculator(true, true, true, false);
+                updateCalculator(true, true, true, false, true);
             }
         }
 
@@ -1060,13 +1147,13 @@
                 setDownPaymentMode(true);
             }
             currentPrice = val;
-            updateCalculator(true, true, false, true);
+            updateCalculator(true, true, false, true, true);
         }
 
         function setPresetTerm(val) {
             currentTerm = val;
             termSlider.value = val;
-            updateCalculator(false, true, true, true);
+            updateCalculator(false, true, true, true, true);
         }
 
         function highlightChips() {
@@ -1093,10 +1180,14 @@
             });
         }
 
-        // Input Listeners
+        // Input Listeners (120 FPS Coalesced Pipeline)
         priceSlider.addEventListener('input', (e) => {
             currentPrice = parseInt(e.target.value, 10);
-            updateCalculator(true, true, false, false);
+            if (document.activeElement !== priceInput) {
+                priceInput.value = currentPrice.toLocaleString('ru-RU');
+            }
+            updateSliderTrack(priceSlider);
+            queueSliderUpdate(false, true, false, false);
         });
 
         priceInput.addEventListener('input', (e) => {
@@ -1106,17 +1197,21 @@
             const maxVal = isWithDownPayment ? MAX_PRICE : MAX_PRICE_NO_DOWN;
             if (val > maxVal) val = maxVal;
             currentPrice = val;
-            updateCalculator(false, true, false, false);
+            updateCalculator(false, true, false, false, true);
         });
 
         priceInput.addEventListener('blur', () => {
             if (currentPrice < MIN_PRICE) currentPrice = MIN_PRICE;
-            updateCalculator(true, true, false, false);
+            updateCalculator(true, true, false, false, true);
         });
 
         termSlider.addEventListener('input', (e) => {
             currentTerm = parseInt(e.target.value, 10);
-            updateCalculator(false, true, true, false);
+            if (document.activeElement !== termInput) {
+                termInput.value = currentTerm;
+            }
+            updateSliderTrack(termSlider);
+            queueSliderUpdate(false, true, false, false);
         });
 
         termInput.addEventListener('input', (e) => {
@@ -1127,18 +1222,22 @@
             if (val < 3 && val > 0) val = 3;
             currentTerm = val;
             termSlider.value = val;
-            updateCalculator(false, true, false, false);
+            updateCalculator(false, true, false, false, true);
         });
 
         termInput.addEventListener('blur', () => {
             if (currentTerm < 3) currentTerm = 3;
             if (currentTerm > 12) currentTerm = 12;
-            updateCalculator(false, true, true, false);
+            updateCalculator(false, true, true, false, true);
         });
 
         downSlider.addEventListener('input', (e) => {
             currentDown = parseInt(e.target.value, 10);
-            updateCalculator(false, true, false, false);
+            if (document.activeElement !== downInput) {
+                downInput.value = currentDown.toLocaleString('ru-RU');
+            }
+            updateSliderTrack(downSlider);
+            queueSliderUpdate(false, false, false, false);
         });
 
         downInput.addEventListener('input', (e) => {
@@ -1362,22 +1461,50 @@
 
         // Initialize on DOM ready
         document.addEventListener('DOMContentLoaded', () => {
-            updateCalculator(true, true, true, true);
+            updateCalculator(true, true, true, true, true);
         });
 
-        // Auto-hide header when scrolling down, reveal when scrolling up
+        // 120 FPS High-Performance Header Scroll Auto-Hide (RAF coalesced + hysteresis)
         let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        let isHeaderHidden = false;
+        let scrollTicking = false;
         const mainHeader = document.getElementById('main-header');
+
         window.addEventListener('scroll', () => {
-            const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
-            if (mainHeader) {
-                if (currentScrollY > 40 && currentScrollY > lastScrollY) {
-                    mainHeader.style.transform = 'translateY(-100%)';
-                } else {
-                    mainHeader.style.transform = 'translateY(0)';
-                }
+            if (!scrollTicking) {
+                window.requestAnimationFrame(() => {
+                    const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+                    const diff = currentScrollY - lastScrollY;
+
+                    if (mainHeader) {
+                        // At top edge, always reveal header smoothly
+                        if (currentScrollY <= 25) {
+                            if (isHeaderHidden) {
+                                mainHeader.style.transform = 'translateY(0)';
+                                isHeaderHidden = false;
+                            }
+                        }
+                        // Deliberate downward scroll past threshold
+                        else if (diff > 10 && currentScrollY > 60) {
+                            if (!isHeaderHidden) {
+                                mainHeader.style.transform = 'translateY(-100%)';
+                                isHeaderHidden = true;
+                            }
+                        }
+                        // Deliberate upward scroll
+                        else if (diff < -10) {
+                            if (isHeaderHidden) {
+                                mainHeader.style.transform = 'translateY(0)';
+                                isHeaderHidden = false;
+                            }
+                        }
+                    }
+
+                    lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+                    scrollTicking = false;
+                });
+                scrollTicking = true;
             }
-            lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
         }, { passive: true });
     </script>
     <!-- Service Worker Registration for Offline PWA -->
