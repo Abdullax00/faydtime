@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta id="theme-color-meta" name="theme-color" content="#e0e0e0">
+    <title>Fayd Time — Калькулятор рассрочки</title>
+
+    <!-- PWA & Mobile Icons -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fayd Time">
+
+    <!-- Open Graph / Meta Preview for Telegram, WhatsApp, Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Fayd Time — Калькулятор рассрочки">
+    <meta property="og:description" content="Удобный и прозрачный расчет исламской рассрочки Fayd Time. Работает на телефонах офлайн даже без интернета.">
+    <meta property="og:image" content="icon-512.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Fayd Time — Калькулятор рассрочки">
+    <meta name="twitter:description" content="Удобный расчет исламской рассрочки. Работает автономно без интернета.">
+    <meta name="twitter:image" content="icon-512.png">
+
+    <!-- Theme Detection (No FOUC) -->
+    <script>
+        (function() {
+            var saved = localStorage.getItem('fayd_theme') || 'light';
+            if (saved === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+
+        <style>
+        /* Exact Figma Design Tokens & Premium Glassmorphism */
+        :root {
+            --bg-page: radial-gradient(120% 100% at 50% 20%, #eaeaea 0%, #d8d8d8 55%, #c2c2c2 100%);
+            --text-heading: #000000;
+            --text-sub: #606060;
+            --card-glass: rgba(255, 255, 255, 0.40);
+            --card-border: rgba(255, 255, 255, 0.85);
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+            --input-glass: rgba(255, 255, 255, 0.70);
+            --input-border: rgba(255, 255, 255, 0.95);
+            --input-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 5px rgba(0, 0, 0, 0.04);
+            --chip-bg: rgba(255, 255, 255, 0.45);
+            --chip-text: #000000;
+            --chip-border: rgba(255, 255, 255, 0.85);
+            --chip-active-bg: rgba(16, 185, 129, 0.16);
+            --chip-active-border: #10B981;
+            --chip-active-text: #047857;
+            --btn-glass: rgba(255, 255, 255, 0.45);
+            --btn-border: rgba(255, 255, 255, 0.85);
+            --btn-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+            --track-unfilled: #c4c4c4;
+        }
+
+        .dark {
+            --bg-page: radial-gradient(120% 100% at 50% 20%, #164834 0%, #0c3323 55%, #03150d 100%);
+            --text-heading: #ffffff;
+            --text-sub: #b2c4bc;
+            --card-glass: rgba(255, 255, 255, 0.06);
+            --card-border: rgba(255, 255, 255, 0.14);
+            --card-shadow: 0 14px 40px -5px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+            --input-glass: rgba(255, 255, 255, 0.09);
+            --input-border: rgba(255, 255, 255, 0.2);
+            --input-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 2px 6px rgba(0, 0, 0, 0.25);
+            --chip-bg: rgba(255, 255, 255, 0.08);
+            --chip-text: #ffffff;
+            --chip-border: rgba(255, 255, 255, 0.14);
+            --chip-active-bg: rgba(16, 185, 129, 0.28);
+            --chip-active-border: #10B981;
+            --chip-active-text: #6ee7b7;
+            --btn-glass: rgba(255, 255, 255, 0.08);
+            --btn-border: rgba(255, 255, 255, 0.16);
+            --btn-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+            --track-unfilled: rgba(255, 255, 255, 0.22);
+        }
+
+        body {
+            background: var(--bg-page);
+            background-attachment: fixed;
+            color: var(--text-heading);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Cards */
+        .figma-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1.5px solid var(--card-border);
+            border-radius: 18px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .figma-header {
+            background: transparent;
+            border-bottom: none;
+        }
+
+        /* Input capsule */
+        .figma-input-capsule {
+            background: var(--input-glass);
+            border: 1.5px solid var(--input-border);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 10px;
+            box-shadow: var(--input-shadow);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .figma-input-capsule:focus-within {
+            border-color: #10B981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35);
+        }
+
+        /* Sliders */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 7px;
+            border-radius: 4px;
+            background: #10B981;
+            outline: none;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3.5px solid #10B981;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 10px rgba(16, 185, 129, 0.4);
+            cursor: grab;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            transform: scale(1.12);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3.5px solid #10B981;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 10px rgba(16, 185, 129, 0.4);
+            cursor: grab;
+        }
+
+        /* Mode Switcher Tabs */
+        .figma-mode-switcher {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            height: 48px;
+            border-radius: 14px;
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .dark .figma-mode-switcher {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35);
+        }
+
+        .figma-tab-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.06);
+            transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .dark .figma-tab-slider {
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .figma-tab-slider.is-right {
+            transform: translateX(100%);
+        }
+
+        .figma-tab-btn {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 500;
+            color: #6a6a6a;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            white-space: nowrap;
+            padding: 0 18px;
+        }
+
+        .dark .figma-tab-btn {
+            color: #a0a0a0;
+        }
+
+        .figma-tab-btn.active {
+            color: #000000;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .dark .figma-tab-btn.active {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        /* Preset Chips */
+        .figma-chip {
+            background: var(--chip-bg);
+            color: var(--chip-text);
+            border: 1px solid var(--chip-border);
+            border-radius: 8px;
+            height: 38px;
+            font-size: 13.5px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+
+        .figma-chip:hover {
+            transform: translateY(-1px);
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .figma-chip.active {
+            background: var(--chip-active-bg) !important;
+            border: 1.5px solid var(--chip-active-border) !important;
+            color: var(--chip-active-text) !important;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .figma-action-btn {
+            background: var(--btn-glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.5px solid var(--btn-border);
+            border-radius: 14px;
+            box-shadow: var(--btn-shadow);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text-heading);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .figma-action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.04);
+            box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+        }
+
+        .dark .figma-action-btn:hover {
+            box-shadow: 0 14px 32px -4px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+        }
+
+        .figma-action-btn:active {
+            transform: translateY(0);
+            filter: brightness(0.97);
+        }
+
+        /* Expandable Down Payment */
+        #down-payment-wrapper {
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+        }
+
+        #down-payment-wrapper.expanded {
+            max-height: 400px;
+            opacity: 1;
+        }
+
+        /* Payment Schedule Modal */
+        .schedule-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+
+        .schedule-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .schedule-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(2, 6, 16, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .schedule-modal-dialog {
+            position: relative;
+            z-index: 1001;
+            width: 100%;
+            max-width: 580px;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(0, 64, 36, 0.12);
+            overflow: hidden;
+            transform: scale(0.95) translateY(12px);
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dark .schedule-modal-dialog {
+            background: #083422;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .schedule-modal-overlay.active .schedule-modal-dialog {
+            transform: scale(1) translateY(0);
+        }
+
+        .schedule-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 64, 36, 0.08);
+        }
+
+        .dark .schedule-modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .schedule-modal-close-btn {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.65rem;
+            border: none;
+            background: #f1f5f9;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark .schedule-modal-close-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+        }
+
+        .schedule-modal-body {
+            padding: 1.25rem 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.88rem;
+        }
+
+        .schedule-table th {
+            padding: 0.65rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dark .schedule-table th {
+            color: #94a3b8;
+            background: rgba(0, 40, 20, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .schedule-table td {
+            padding: 0.65rem 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #000000;
+        }
+
+        .dark .schedule-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            background: #004024;
+            color: #ffffff;
+            padding: 0.75rem 1.35rem;
+            border-radius: 9999px;
+            box-shadow: 0 12px 30px rgba(0, 40, 20, 0.45);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+
+        .toast-notification.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Print Styles */
+        .print-only { display: none !important; }
+        @media print {
+            body > *:not(#print-sheet) { display: none !important; }
+            #print-sheet.print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Clean CSS Radial Gradient Background Active -->
+
+    <!-- Figma Top Header (Height: 83px, Frosted Glass) -->
+    <header class="w-full h-[76px] sm:h-[83px] figma-header sticky top-0 z-40 px-4 sm:px-6 md:px-8 xl:px-12 2xl:px-[124px]">
+        <div class="w-full max-w-[1672px] h-full mx-auto flex items-center justify-between">
+            <!-- Brand Logo & Name -->
+            <div class="flex items-center gap-[10px] cursor-pointer" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+                <div class="w-[35px] h-[35px] rounded-[8.2px] border-[3.5px] border-current flex items-center justify-center p-[4px] flex-shrink-0">
+                    <svg class="w-full h-full fill-none stroke-current" stroke-width="3" viewBox="0 0 25 26">
+                        <path d="M2 6H11M14 16H23M14 21H23M2 18H11M6.5 13.5V22.5M15.5 8L19.5 4M19.5 8L15.5 4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <span class="text-[22px] sm:text-[28px] font-bold leading-none tracking-tight">Fayd Time</span>
+                    <span class="text-[10px] sm:text-[11.7px] font-semibold tracking-[0.23px] text-theme-sub mt-1">Калькулятор рассрочки</span>
+                </div>
+            </div>
+
+            <!-- Theme Switcher Button (53x54px rounded-[10.8px]) -->
+            <button type="button" onclick="cycleTheme()" class="w-[46px] h-[46px] sm:w-[53px] sm:h-[54px] rounded-[10.8px] figma-card flex items-center justify-center cursor-pointer p-0 transition-transform hover:scale-105 active:scale-95" title="Переключить тему">
+                <img src="assets/moon_button.svg" alt="" class="w-[28px] h-[28px] dark:hidden">
+                <img src="assets/sun_figma.svg" alt="" class="w-[28px] h-[28px] hidden dark:block">
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-[1672px] mx-auto px-4 sm:px-6 md:px-8 xl:px-12 2xl:px-[124px] pt-3 sm:pt-5 lg:pt-[28px] pb-14">
+
+        <!-- Title & Mode Tabs Switcher -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+            <h1 class="text-[26px] sm:text-[36px] lg:text-[44px] 2xl:text-[52px] font-bold tracking-tight text-theme-heading leading-tight">
+                Параметры рассрочки
+            </h1>
+
+            <!-- Figma Mode Tabs: Со взносом Left, Без взноса Right -->
+            <div class="figma-mode-switcher w-full sm:w-[320px] lg:w-[360px]">
+                <div id="tab-slider" class="figma-tab-slider"></div>
+                <button type="button" id="tab-with-down" class="figma-tab-btn active" onclick="setDownPaymentMode(true)">
+                    Со взносом
+                </button>
+                <button type="button" id="tab-no-down" class="figma-tab-btn" onclick="setDownPaymentMode(false)">
+                    Без взноса
+                </button>
+            </div>
+        </div>
+
+        <!-- Controls Grid -->
+        <div class="space-y-[18px] sm:space-y-[24px]">
+
+            <!-- Row 1: Стоимость товара & Количество платежей -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-[18px] sm:gap-[24px]">
+
+                <!-- Card 1: Стоимость товара -->
+                <div class="figma-card p-5 sm:p-[28px] flex flex-col justify-between min-h-[226px]">
+                    <div>
+                        <!-- Header with Input -->
+                        <div class="flex items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
+                            <label for="price-input" class="text-[16px] sm:text-[20px] 2xl:text-[22.6px] font-extrabold text-theme-heading leading-tight flex-shrink-0">
+                                Стоимость<br class="sm:hidden"> товара
+                            </label>
+
+                            <div class="figma-input-capsule w-auto min-w-[130px] sm:min-w-[170px] max-w-[240px] h-[46px] sm:h-[55px] px-3 sm:px-4 flex items-center justify-between gap-2 flex-shrink cursor-pointer" onclick="document.getElementById('price-input').focus()">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 pointer-events-none" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11.31 5.75L1.26 15.78V20.8H6.28L16.34 10.77M11.31 5.75L14.92 2.16a1.5 1.5 0 0 1 2.12 0l2.83 2.83a1.5 1.5 0 0 1 0 2.12L16.34 10.77M11.31 5.75L16.34 10.77"/>
+                                </svg>
+                                <div class="flex items-center text-[16px] sm:text-[22px] 2xl:text-[25px] font-extrabold text-theme-heading tracking-tight flex-1 justify-end">
+                                    <input type="text" id="price-input" inputmode="numeric" value="100 000" class="bg-transparent border-none outline-none text-right w-full min-w-0 max-w-[85px] sm:max-w-[130px] 2xl:max-w-[160px] p-0 font-extrabold text-theme-heading focus:ring-0">
+                                    <span class="ml-0.5 sm:ml-1 font-extrabold flex-shrink-0">₽</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slider -->
+                        <div class="py-2">
+                            <input type="range" id="price-slider" min="25000" max="100000" step="1000" value="100000">
+                        </div>
+
+                        <!-- Min & Max Labels -->
+                        <div class="flex items-center justify-between text-[12px] sm:text-[16.3px] font-medium text-theme-sub mt-2">
+                            <span>25 000 ₽</span>
+                            <span id="price-max-label">100 000 ₽</span>
+                        </div>
+                    </div>
+
+                    <!-- Preset Chips (4 equal symmetrical columns) -->
+                    <div id="price-presets-container" class="grid grid-cols-4 gap-2 pt-2 mt-2">
+                        <button type="button" onclick="setPresetPrice(25000)" class="figma-chip">25 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(50000)" class="figma-chip">50 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(75000)" class="figma-chip">75 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(100000)" class="figma-chip active">100 000 ₽</button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Количество платежей -->
+                <div class="figma-card p-5 sm:p-[28px] flex flex-col justify-between min-h-[226px]">
+                    <div>
+                        <!-- Header with Input -->
+                        <div class="flex items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
+                            <label for="term-input" class="text-[16px] sm:text-[20px] 2xl:text-[22.6px] font-extrabold text-theme-heading leading-tight flex-shrink-0">
+                                Количество<br class="sm:hidden"> платежей
+                            </label>
+
+                            <div class="figma-input-capsule w-auto min-w-[110px] sm:min-w-[140px] max-w-[180px] h-[46px] sm:h-[55px] px-3 sm:px-4 flex items-center justify-between gap-2 flex-shrink cursor-pointer" onclick="document.getElementById('term-input').focus()">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 pointer-events-none" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11.31 5.75L1.26 15.78V20.8H6.28L16.34 10.77M11.31 5.75L14.92 2.16a1.5 1.5 0 0 1 2.12 0l2.83 2.83a1.5 1.5 0 0 1 0 2.12L16.34 10.77M11.31 5.75L16.34 10.77"/>
+                                </svg>
+                                <div class="flex items-center text-[16px] sm:text-[22px] 2xl:text-[25px] font-extrabold text-theme-heading tracking-tight flex-1 justify-end">
+                                    <input type="text" id="term-input" inputmode="numeric" value="12" class="bg-transparent border-none outline-none text-right w-full min-w-0 max-w-[35px] sm:max-w-[50px] p-0 font-extrabold text-theme-heading focus:ring-0">
+                                    <span class="ml-0.5 sm:ml-1 font-extrabold flex-shrink-0">мес.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slider -->
+                        <div class="py-2">
+                            <input type="range" id="term-slider" min="3" max="12" step="1" value="12">
+                        </div>
+
+                        <!-- Min & Max Labels -->
+                        <div class="flex items-center justify-between text-[12px] sm:text-[16.3px] font-medium text-theme-sub mt-2">
+                            <span>3 м.</span>
+                            <span>12 м.</span>
+                        </div>
+                    </div>
+
+                    <!-- Preset Chips (4 equal symmetrical columns) -->
+                    <div id="term-presets-container" class="grid grid-cols-4 gap-2 pt-2 mt-2">
+                        <button type="button" onclick="setPresetTerm(3)" class="figma-chip">3 мес</button>
+                        <button type="button" onclick="setPresetTerm(6)" class="figma-chip">6 мес</button>
+                        <button type="button" onclick="setPresetTerm(9)" class="figma-chip">9 мес</button>
+                        <button type="button" onclick="setPresetTerm(12)" class="figma-chip active">12 мес</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Row 2: Первоначальный взнос (Full width matching Figma) -->
+            <div id="down-payment-wrapper" class="expanded">
+                <div class="figma-card p-5 sm:p-[28px] min-h-[178px]">
+                    <div class="flex items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
+                        <label for="down-input" class="text-[16px] sm:text-[20px] 2xl:text-[23.7px] font-extrabold text-theme-heading leading-tight flex-shrink-0">
+                            Первоначальный<br class="sm:hidden"> взнос
+                        </label>
+
+                        <div class="figma-input-capsule w-auto min-w-[130px] sm:min-w-[170px] max-w-[240px] h-[46px] sm:h-[58px] px-3 sm:px-4 flex items-center justify-between gap-2 flex-shrink cursor-pointer" onclick="document.getElementById('down-input').focus()">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0 pointer-events-none" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11.31 5.75L1.26 15.78V20.8H6.28L16.34 10.77M11.31 5.75L14.92 2.16a1.5 1.5 0 0 1 2.12 0l2.83 2.83a1.5 1.5 0 0 1 0 2.12L16.34 10.77M11.31 5.75L16.34 10.77"/>
+                            </svg>
+                            <div class="flex items-center text-[16px] sm:text-[22px] 2xl:text-[26.4px] font-extrabold text-theme-heading tracking-tight flex-1 justify-end">
+                                <input type="text" id="down-input" inputmode="numeric" value="34 500" class="bg-transparent border-none outline-none text-right w-full min-w-0 max-w-[85px] sm:max-w-[130px] 2xl:max-w-[160px] p-0 font-extrabold text-theme-heading focus:ring-0">
+                                <span class="ml-0.5 sm:ml-1 font-extrabold flex-shrink-0">₽</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider -->
+                    <div class="py-2">
+                        <input type="range" id="down-slider" min="34500" max="117300" step="1" value="34500">
+                    </div>
+
+                    <!-- Min & Max Labels -->
+                    <div class="flex items-center justify-between text-[12px] sm:text-[17.1px] font-medium text-theme-sub mt-2">
+                        <span id="down-min-label">34 500 ₽ (25%)</span>
+                        <span id="down-max-label">117 300 ₽ (85%)</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Row 3: Results (Mobile: 1 top + 2 bottom | Desktop: 3 columns) -->
+        <div class="mt-6 sm:mt-[24px]">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-[12px] sm:gap-[24px]">
+
+                <!-- Result 1: Ежемесячный платёж -->
+                <div class="col-span-2 md:col-span-1 figma-card p-5 sm:px-[28px] sm:py-[22px] min-h-[108px] sm:h-[124px] relative overflow-hidden flex flex-col justify-between">
+                    <span class="text-[16px] sm:text-[23.5px] font-bold text-theme-heading leading-tight tracking-[-0.7px]">
+                        Ежемесячный платёж
+                    </span>
+                    <span id="monthly-payment" class="text-[26px] sm:text-[34px] font-extrabold text-theme-heading leading-none tracking-[-1px]">
+                        8 625 ₽
+                    </span>
+                    <div class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 pointer-events-none dark:brightness-125">
+                        <img src="assets/calendar_figma.svg" alt="" class="w-[68px] h-[75px] sm:w-[85px] sm:h-[94px]">
+                    </div>
+                </div>
+
+                <!-- Result 2: Торговая наценка -->
+                <div class="col-span-1 figma-card p-5 sm:px-[28px] sm:py-[22px] min-h-[108px] sm:h-[124px] relative overflow-hidden flex flex-col justify-between">
+                    <span class="text-[16px] sm:text-[23.5px] font-bold text-theme-heading leading-tight">
+                        <span class="sm:hidden">Наценка</span>
+                        <span class="hidden sm:inline">Торговая наценка</span>
+                    </span>
+                    <span id="markup" class="text-[22px] sm:text-[34px] font-extrabold text-theme-heading leading-none">
+                        38 000 ₽
+                    </span>
+                    <div class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 pointer-events-none dark:brightness-125">
+                        <img src="assets/trend_figma.svg" alt="" class="w-[80px] h-[54px] sm:w-[105px] sm:h-[70px]">
+                    </div>
+                </div>
+
+                <!-- Result 3: Итоговая стоимость -->
+                <div class="col-span-1 figma-card p-5 sm:px-[28px] sm:py-[22px] min-h-[108px] sm:h-[124px] relative overflow-hidden flex flex-col justify-between">
+                    <span class="text-[16px] sm:text-[23.5px] font-bold text-theme-heading leading-tight">
+                        <span class="sm:hidden">Итого</span>
+                        <span class="hidden sm:inline">Итоговая стоимость</span>
+                    </span>
+                    <span id="total-cost" class="text-[22px] sm:text-[34px] font-extrabold text-theme-heading leading-none">
+                        138 000 ₽
+                    </span>
+                    <div class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 pointer-events-none dark:brightness-125">
+                        <img src="assets/pie_figma.svg" alt="" class="w-[68px] h-[68px] sm:w-[90px] sm:h-[90px]">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Row 4: Action Buttons (Mobile: 1 full + 2 side-by-side | Desktop: 3 columns) -->
+        <div class="mt-4 sm:mt-[24px]">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-[12px] sm:gap-[24px]">
+
+                <!-- Button 1: Скопировать расчёт -->
+                <button type="button" onclick="copyCalculationSummary()" class="col-span-2 md:col-span-1 figma-action-btn h-[60px] sm:h-[72px] text-[16px] sm:text-[19px]">
+                    <img src="assets/button_icon_light.svg" alt="" class="w-[18px] h-[22px] sm:w-[20px] sm:h-[24px] dark:hidden">
+                    <img src="assets/button_icon_dark.svg" alt="" class="w-[18px] h-[22px] sm:w-[20px] sm:h-[24px] hidden dark:block">
+                    <span>Скопировать расчёт</span>
+                </button>
+
+                <!-- Button 2: График платежей -->
+                <button type="button" onclick="openScheduleModal()" class="col-span-1 figma-action-btn h-[60px] sm:h-[72px] text-[14px] sm:text-[19px]">
+                    <img src="assets/btn_calendar_light.svg" alt="" class="w-[18px] h-[20px] sm:w-[20px] sm:h-[22px] dark:hidden">
+                    <img src="assets/btn_calendar_dark.svg" alt="" class="w-[18px] h-[20px] sm:w-[20px] sm:h-[22px] hidden dark:block">
+                    <span>График платежей</span>
+                </button>
+
+                <!-- Button 3: Сохранить PDF -->
+                <button type="button" onclick="saveAsPDF()" class="col-span-1 figma-action-btn h-[60px] sm:h-[72px] text-[14px] sm:text-[19px]">
+                    <svg class="w-[18px] h-[22px] sm:w-[20px] sm:h-[24px] text-current flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>Сохранить PDF</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Footnote (Centered matching Figma) -->
+        <div class="mt-8 sm:mt-12 text-center">
+            <p class="text-[13px] sm:text-[16px] text-theme-sub max-w-4xl mx-auto leading-relaxed">
+                Расчёты носят исключительно справочно-информационный характер
+            </p>
+        </div>
+
+    </main>
+
+    <!-- Payment Schedule Modal -->
+    <div id="schedule-modal" class="schedule-modal-overlay" aria-hidden="true">
+        <div class="schedule-modal-backdrop" onclick="closeScheduleModal()"></div>
+        <div class="schedule-modal-dialog" role="dialog" aria-modal="true">
+            <div class="schedule-modal-header">
+                <div>
+                    <h3 class="text-xl font-bold text-theme-heading m-0">График платежей</h3>
+                    <p id="schedule-modal-subtitle" class="text-xs text-theme-sub mt-1">Рассчитан на 12 месяцев</p>
+                </div>
+                <button type="button" class="schedule-modal-close-btn" onclick="closeScheduleModal()" aria-label="Закрыть">
+                    ✕
+                </button>
+            </div>
+
+            <div class="schedule-modal-body">
+                <div class="flex flex-wrap gap-4 p-3 rounded-lg bg-black/5 dark:bg-white/5 mb-4 text-xs font-semibold">
+                    <div>Сумма: <span id="modal-summary-price" class="text-emerald-600 dark:text-emerald-400 font-bold">100 000 ₽</span></div>
+                    <div id="modal-summary-down-wrap">Взнос: <span id="modal-summary-down" class="text-emerald-600 dark:text-emerald-400 font-bold">34 500 ₽</span></div>
+                    <div>Платеж: <span id="modal-summary-monthly" class="text-emerald-600 dark:text-emerald-400 font-bold">8 625 ₽</span></div>
+                    <div>Итого: <span id="modal-summary-total" class="text-amber-600 dark:text-amber-400 font-bold">138 000 ₽</span></div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left">№</th>
+                                <th class="text-left">Ориентир даты</th>
+                                <th class="text-right">Сумма платежа</th>
+                                <th class="text-right">Остаток долга</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-table-body">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-black/5 dark:border-white/10 flex justify-end gap-3">
+                <button type="button" onclick="copyScheduleText()" class="px-4 py-2 rounded-lg border border-black/10 dark:border-white/20 text-xs font-semibold hover:bg-black/5">Скопировать</button>
+                <button type="button" onclick="saveAsPDF()" class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700">Сохранить PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-notification">
+        <span>✓</span>
+        <span id="toast-message">Готово!</span>
+    </div>
+
+    <!-- Print Sheet for PDF Export -->
+    <div id="print-sheet" class="print-only">
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #000;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #004024; padding-bottom: 10px; margin-bottom: 15px;">
+                <div>
+                    <h1 style="font-size: 20px; font-weight: 800; margin: 0; color: #004024;">Fayd Time</h1>
+                    <p style="font-size: 11px; color: #555; margin: 4px 0 0;">Калькулятор рассрочки</p>
+                </div>
+                <div style="text-align: right; font-size: 11px; color: #555;">
+                    <div>Сформировано: <span id="print-gen-date"></span></div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #f8fafc; padding: 10px; border: 1px solid #ddd; margin-bottom: 15px; font-size: 11px;">
+                <div>Товар: <strong id="print-sum-price">100 000 ₽</strong></div>
+                <div id="print-down-row">Взнос: <strong id="print-sum-down">34 500 ₽</strong></div>
+                <div>Срок: <strong id="print-sum-term">12 мес.</strong></div>
+                <div>Платеж: <strong id="print-sum-monthly">8 625 ₽</strong></div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                <thead>
+                    <tr style="background: #004024; color: white;">
+                        <th style="padding: 6px; border: 1px solid #004024; text-align: left;">№</th>
+                        <th style="padding: 6px; border: 1px solid #004024; text-align: left;">Дата платежа</th>
+                        <th style="padding: 6px; border: 1px solid #004024; text-align: right;">Сумма</th>
+                        <th style="padding: 6px; border: 1px solid #004024; text-align: right;">Остаток</th>
+                    </tr>
+                </thead>
+                <tbody id="print-table-body">
+                    <!-- Dynamic -->
+                </tbody>
+            </table>
+
+            <div style="margin-top: 15px; font-size: 10px; color: #777; text-align: center;">
+                Расчёты носят исключительно справочно-информационный характер
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator Logic Script (Exact Business Logic & Adaptive Down Payment) -->
+    <script>
+        // Exact rates table matching index.backup.html
+        const ratesNoDownTable = [0.15, 0.20, 0.25, 0.30, 0.35, 0.38, 0.43, 0.46, 0.47, 0.50];
+        const ratesWithDownTable = [0.13, 0.15, 0.17, 0.20, 0.23, 0.28, 0.30, 0.32, 0.35, 0.38];
+
+        const MIN_PRICE = 25000;
+        const MAX_PRICE = 3000000;
+        const MAX_PRICE_NO_DOWN = 100000;
+
+        let currentPrice = 100000;
+        let currentTerm = 12;
+        let currentDown = 34500;
+        let oldMinDown = 34500;
+        let isWithDownPayment = true;
+
+        // DOM elements
+        const priceInput = document.getElementById('price-input');
+        const priceSlider = document.getElementById('price-slider');
+        const priceMaxLabel = document.getElementById('price-max-label');
+        const termInput = document.getElementById('term-input');
+        const termSlider = document.getElementById('term-slider');
+        const downInput = document.getElementById('down-input');
+        const downSlider = document.getElementById('down-slider');
+        const downMinLabel = document.getElementById('down-min-label');
+        const downMaxLabel = document.getElementById('down-max-label');
+        const downPaymentWrapper = document.getElementById('down-payment-wrapper');
+        const tabSlider = document.getElementById('tab-slider');
+        const tabWithDown = document.getElementById('tab-with-down');
+        const tabNoDown = document.getElementById('tab-no-down');
+        const monthlyEl = document.getElementById('monthly-payment');
+        const markupEl = document.getElementById('markup');
+        const totalEl = document.getElementById('total-cost');
+
+        function getInterpolatedRate(term, withDown) {
+            const table = withDown ? ratesWithDownTable : ratesNoDownTable;
+            const idx = Math.min(Math.max(term - 3, 0), table.length - 1);
+            return table[idx];
+        }
+
+        function updateSliderTrack(slider) {
+            if (!slider) return;
+            const min = parseFloat(slider.min) || 0;
+            const max = parseFloat(slider.max) || 100;
+            const val = parseFloat(slider.value) || 0;
+            const percentage = max > min ? Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100)) : 0;
+            const isDark = document.documentElement.classList.contains('dark');
+            const emptyColor = isDark ? 'rgba(255, 255, 255, 0.22)' : '#c4c4c4';
+            slider.style.background = `linear-gradient(to right, #10B981 0%, #10B981 ${percentage}%, ${emptyColor} ${percentage}%, ${emptyColor} 100%)`;
+        }
+
+        function updateCalculator(updatePrice = true, updateDown = true, updateTerm = true, resetDownToMin = false) {
+            const price = currentPrice;
+            const months = currentTerm;
+
+            if (updatePrice && document.activeElement !== priceInput) {
+                priceInput.value = price.toLocaleString('ru-RU');
+            }
+            if (updateTerm && document.activeElement !== termInput) {
+                termInput.value = months;
+            }
+
+            // Adjust slider max dynamically
+            let currentSliderMax = 100000;
+            if (isWithDownPayment && price > 100000) {
+                currentSliderMax = MAX_PRICE;
+            }
+            priceSlider.max = currentSliderMax;
+            priceMaxLabel.innerText = `${currentSliderMax.toLocaleString('ru-RU')} ₽`;
+            priceSlider.value = Math.min(price, currentSliderMax);
+
+            const rate = getInterpolatedRate(months, isWithDownPayment);
+            const markup = Math.round(price * rate);
+            const total = price + markup;
+
+            let down = 0;
+            if (isWithDownPayment) {
+                const prevMinDown = oldMinDown;
+                const minDown = Math.ceil(total * 0.25);
+                const maxDown = Math.round(total * 0.85);
+
+                downSlider.min = minDown;
+                downSlider.max = maxDown;
+
+                downMinLabel.innerText = `${minDown.toLocaleString('ru-RU')} ₽ (25%)`;
+                downMaxLabel.innerText = `${maxDown.toLocaleString('ru-RU')} ₽ (85%)`;
+
+                // If reset requested or previous down payment was at the minimum, scale to new minimum
+                if (resetDownToMin || currentDown === 0 || currentDown === prevMinDown || currentDown < minDown) {
+                    currentDown = minDown;
+                } else if (currentDown > maxDown) {
+                    currentDown = maxDown;
+                }
+
+                oldMinDown = minDown;
+                downSlider.value = currentDown;
+                down = currentDown;
+
+                if (updateDown && document.activeElement !== downInput) {
+                    downInput.value = down.toLocaleString('ru-RU');
+                }
+            } else {
+                currentDown = 0;
+                down = 0;
+            }
+
+            const principal = total - down;
+            const monthly = Math.round(principal / months);
+
+            markupEl.innerText = `${markup.toLocaleString('ru-RU')} ₽`;
+            totalEl.innerText = `${total.toLocaleString('ru-RU')} ₽`;
+            monthlyEl.innerText = `${monthly.toLocaleString('ru-RU')} ₽`;
+
+            updateSliderTrack(priceSlider);
+            updateSliderTrack(termSlider);
+            updateSliderTrack(downSlider);
+
+            highlightChips();
+        }
+
+        function setDownPaymentMode(mode) {
+            isWithDownPayment = mode;
+
+            if (mode) {
+                tabSlider.classList.remove('is-right');
+                tabWithDown.classList.add('active');
+                tabNoDown.classList.remove('active');
+                downPaymentWrapper.classList.add('expanded');
+                updateCalculator(true, true, true, true);
+            } else {
+                tabSlider.classList.add('is-right');
+                tabNoDown.classList.add('active');
+                tabWithDown.classList.remove('active');
+                downPaymentWrapper.classList.remove('expanded');
+                if (currentPrice > MAX_PRICE_NO_DOWN) {
+                    currentPrice = MAX_PRICE_NO_DOWN;
+                }
+                updateCalculator(true, true, true, false);
+            }
+        }
+
+        function setPresetPrice(val) {
+            if (val > MAX_PRICE_NO_DOWN && !isWithDownPayment) {
+                setDownPaymentMode(true);
+            }
+            currentPrice = val;
+            updateCalculator(true, true, false, true);
+        }
+
+        function setPresetTerm(val) {
+            currentTerm = val;
+            termSlider.value = val;
+            updateCalculator(false, true, true, true);
+        }
+
+        function highlightChips() {
+            // Price chips
+            const priceChips = document.querySelectorAll('#price-presets-container .figma-chip');
+            priceChips.forEach(btn => {
+                const num = parseInt(btn.innerText.replace(/\D/g, ''), 10);
+                if (num === currentPrice) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Term chips
+            const termChips = document.querySelectorAll('#term-presets-container .figma-chip');
+            termChips.forEach(btn => {
+                const num = parseInt(btn.innerText.replace(/\D/g, ''), 10);
+                if (num === currentTerm) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Input Listeners
+        priceSlider.addEventListener('input', (e) => {
+            currentPrice = parseInt(e.target.value, 10);
+            updateCalculator(true, true, false, false);
+        });
+
+        priceInput.addEventListener('input', (e) => {
+            const raw = e.target.value.replace(/\D/g, '');
+            if (!raw) return;
+            let val = parseInt(raw, 10);
+            const maxVal = isWithDownPayment ? MAX_PRICE : MAX_PRICE_NO_DOWN;
+            if (val > maxVal) val = maxVal;
+            currentPrice = val;
+            updateCalculator(false, true, false, false);
+        });
+
+        priceInput.addEventListener('blur', () => {
+            if (currentPrice < MIN_PRICE) currentPrice = MIN_PRICE;
+            updateCalculator(true, true, false, false);
+        });
+
+        termSlider.addEventListener('input', (e) => {
+            currentTerm = parseInt(e.target.value, 10);
+            updateCalculator(false, true, true, false);
+        });
+
+        termInput.addEventListener('input', (e) => {
+            const raw = e.target.value.replace(/\D/g, '');
+            if (!raw) return;
+            let val = parseInt(raw, 10);
+            if (val > 12) val = 12;
+            if (val < 3 && val > 0) val = 3;
+            currentTerm = val;
+            termSlider.value = val;
+            updateCalculator(false, true, false, false);
+        });
+
+        termInput.addEventListener('blur', () => {
+            if (currentTerm < 3) currentTerm = 3;
+            if (currentTerm > 12) currentTerm = 12;
+            updateCalculator(false, true, true, false);
+        });
+
+        downSlider.addEventListener('input', (e) => {
+            currentDown = parseInt(e.target.value, 10);
+            updateCalculator(false, true, false, false);
+        });
+
+        downInput.addEventListener('input', (e) => {
+            const raw = e.target.value.replace(/\D/g, '');
+            if (!raw) return;
+            currentDown = parseInt(raw, 10);
+            updateCalculator(false, false, false, false);
+        });
+
+        downInput.addEventListener('blur', () => {
+            updateCalculator(false, true, false, false);
+        });
+
+        // Theme Toggle
+        function cycleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(isDark ? 'light' : 'dark');
+        }
+
+        function applyTheme(theme) {
+            const meta = document.getElementById('theme-color-meta');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('fayd_theme', 'dark');
+                if (meta) meta.setAttribute('content', '#074129');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('fayd_theme', 'light');
+                if (meta) meta.setAttribute('content', '#e0e0e0');
+            }
+            updateSliderTrack(priceSlider);
+            updateSliderTrack(termSlider);
+            updateSliderTrack(downSlider);
+        }
+
+        // Toast
+        let toastTimeout = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            if (!toast || !toastMsg) return;
+            toastMsg.innerText = msg;
+            toast.classList.add('active');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2500);
+        }
+
+        // Schedule Modal
+        function openScheduleModal() {
+            const modal = document.getElementById('schedule-modal');
+            const tbody = document.getElementById('schedule-table-body');
+            const subtitle = document.getElementById('schedule-modal-subtitle');
+            const sumPrice = document.getElementById('modal-summary-price');
+            const sumDown = document.getElementById('modal-summary-down');
+            const sumDownWrap = document.getElementById('modal-summary-down-wrap');
+            const sumMonthly = document.getElementById('modal-summary-monthly');
+            const sumTotal = document.getElementById('modal-summary-total');
+
+            const price = currentPrice;
+            const months = currentTerm;
+            const rate = getInterpolatedRate(months, isWithDownPayment);
+            const markup = Math.round(price * rate);
+            const total = price + markup;
+            const down = isWithDownPayment ? currentDown : 0;
+            const principal = total - down;
+            const monthly = Math.round(principal / months);
+
+            subtitle.innerText = `Рассчитан на ${months} ${months === 1 ? 'месяц' : months < 5 ? 'месяца' : 'месяцев'}`;
+            sumPrice.innerText = `${price.toLocaleString('ru-RU')} ₽`;
+            sumTotal.innerText = `${total.toLocaleString('ru-RU')} ₽`;
+            sumMonthly.innerText = `${monthly.toLocaleString('ru-RU')} ₽`;
+
+            if (isWithDownPayment) {
+                sumDownWrap.style.display = 'block';
+                sumDown.innerText = `${down.toLocaleString('ru-RU')} ₽`;
+            } else {
+                sumDownWrap.style.display = 'none';
+            }
+
+            tbody.innerHTML = '';
+            let remaining = principal;
+            const now = new Date();
+
+            for (let i = 1; i <= months; i++) {
+                const payDate = new Date(now.getFullYear(), now.getMonth() + i, now.getDate());
+                const dateStr = payDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const currentPay = (i === months) ? remaining : monthly;
+                remaining = Math.max(0, remaining - currentPay);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i}</td>
+                    <td>${dateStr}</td>
+                    <td class="text-right font-semibold">${currentPay.toLocaleString('ru-RU')} ₽</td>
+                    <td class="text-right text-theme-sub">${remaining.toLocaleString('ru-RU')} ₽</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeScheduleModal() {
+            const modal = document.getElementById('schedule-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        // Copy Calculation Summary
+        function copyCalculationSummary() {
+            const price = currentPrice;
+            const months = currentTerm;
+            const rate = getInterpolatedRate(months, isWithDownPayment);
+            const markup = Math.round(price * rate);
+            const total = price + markup;
+            const down = isWithDownPayment ? currentDown : 0;
+            const principal = total - down;
+            const monthly = Math.round(principal / months);
+
+            let text = `Калькулятор Fayd Time\n`;
+            text += `Режим: ${isWithDownPayment ? 'Со взносом' : 'Без взноса'}\n`;
+            text += `Стоимость товара: ${price.toLocaleString('ru-RU')} ₽\n`;
+            text += `Срок рассрочки: ${months} мес.\n`;
+            if (isWithDownPayment) {
+                text += `Первоначальный взнос: ${down.toLocaleString('ru-RU')} ₽\n`;
+            }
+            text += `Торговая наценка: ${markup.toLocaleString('ru-RU')} ₽\n`;
+            text += `Итоговая стоимость: ${total.toLocaleString('ru-RU')} ₽\n`;
+            text += `Ежемесячный платёж: ${monthly.toLocaleString('ru-RU')} ₽\n`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Расчёт скопирован в буфер!');
+            }).catch(() => {
+                showToast('Ошибка при копировании');
+            });
+        }
+
+        function copyScheduleText() {
+            const price = currentPrice;
+            const months = currentTerm;
+            const rate = getInterpolatedRate(months, isWithDownPayment);
+            const markup = Math.round(price * rate);
+            const total = price + markup;
+            const down = isWithDownPayment ? currentDown : 0;
+            const principal = total - down;
+            const monthly = Math.round(principal / months);
+
+            let text = `График платежей Fayd Time\n`;
+            text += `Товар: ${price.toLocaleString('ru-RU')} ₽ | Срок: ${months} мес. | Итого: ${total.toLocaleString('ru-RU')} ₽\n\n`;
+
+            let remaining = principal;
+            const now = new Date();
+
+            for (let i = 1; i <= months; i++) {
+                const payDate = new Date(now.getFullYear(), now.getMonth() + i, now.getDate());
+                const dateStr = payDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const currentPay = (i === months) ? remaining : monthly;
+                remaining = Math.max(0, remaining - currentPay);
+                text += `${i}. ${dateStr} — ${currentPay.toLocaleString('ru-RU')} ₽ (остаток: ${remaining.toLocaleString('ru-RU')} ₽)\n`;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('График скопирован!');
+            });
+        }
+
+        // PDF Print Export
+        function saveAsPDF() {
+            const price = currentPrice;
+            const months = currentTerm;
+            const rate = getInterpolatedRate(months, isWithDownPayment);
+            const markup = Math.round(price * rate);
+            const total = price + markup;
+            const down = isWithDownPayment ? currentDown : 0;
+            const principal = total - down;
+            const monthly = Math.round(principal / months);
+
+            document.getElementById('print-gen-date').innerText = new Date().toLocaleDateString('ru-RU');
+            document.getElementById('print-sum-price').innerText = `${price.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('print-sum-term').innerText = `${months} мес.`;
+            document.getElementById('print-sum-monthly').innerText = `${monthly.toLocaleString('ru-RU')} ₽`;
+
+            const printDownRow = document.getElementById('print-down-row');
+            if (isWithDownPayment) {
+                printDownRow.style.display = 'block';
+                document.getElementById('print-sum-down').innerText = `${down.toLocaleString('ru-RU')} ₽`;
+            } else {
+                printDownRow.style.display = 'none';
+            }
+
+            const tbody = document.getElementById('print-table-body');
+            tbody.innerHTML = '';
+            let remaining = principal;
+            const now = new Date();
+
+            for (let i = 1; i <= months; i++) {
+                const payDate = new Date(now.getFullYear(), now.getMonth() + i, now.getDate());
+                const dateStr = payDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const currentPay = (i === months) ? remaining : monthly;
+                remaining = Math.max(0, remaining - currentPay);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="padding: 6px; border: 1px solid #ddd;">${i}</td>
+                    <td style="padding: 6px; border: 1px solid #ddd;">${dateStr}</td>
+                    <td style="padding: 6px; border: 1px solid #ddd; text-align: right; font-weight: bold;">${currentPay.toLocaleString('ru-RU')} ₽</td>
+                    <td style="padding: 6px; border: 1px solid #ddd; text-align: right; color: #555;">${remaining.toLocaleString('ru-RU')} ₽</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            window.print();
+        }
+
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCalculator(true, true, true, true);
+        });
+    </script>
+<!-- Service Worker Registration for Offline PWA -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((reg) => {
+                    console.log('Fayd Time PWA: Service Worker успешно активен', reg.scope);
+                })
+                .catch((err) => {
+                    console.error('Fayd Time PWA: Ошибка регистрации Service Worker', err);
+                });
+        });
+    }
+</script>
+
+</body>
+</html>
