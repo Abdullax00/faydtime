@@ -1,13 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
-    <rect width="48" height="48" rx="10" fill="#0a140f"/>
-    <rect x="7" y="7" width="34" height="34" rx="8" stroke="#10b981" stroke-width="2.5"/>
-    <g transform="translate(12, 11) scale(0.96)" stroke-linecap="round" stroke-width="3">
-        <path d="M2 6H11" stroke="#6ee7b7"/>
-        <path d="M14 16H23" stroke="#ffffff"/>
-        <path d="M14 21H23" stroke="#ffffff"/>
-        <path d="M2 18H11" stroke="#6ee7b7"/>
-        <path d="M6.5 13.5V22.5" stroke="#6ee7b7"/>
-        <path d="M15.5 8L19.5 4" stroke="#10b981"/>
-        <path d="M19.5 8L15.5 4" stroke="#10b981"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+    <defs>
+        <radialGradient id="bgGrad" cx="45%" cy="35%" r="75%">
+            <stop offset="0%" stop-color="#14533a"/>
+            <stop offset="60%" stop-color="#0a2a1c"/>
+            <stop offset="100%" stop-color="#04150e"/>
+        </radialGradient>
+    </defs>
+    <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+    <circle cx="230" cy="180" r="160" fill="#10b981" opacity="0.22"/>
+    <rect x="92" y="82" width="328" height="328" rx="70" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.65" stroke-width="8"/>
+    <rect x="156" y="180" width="46" height="12" rx="6" fill="#6ee7b7"/>
+    <g transform="translate(332, 186) rotate(45)">
+        <rect x="-18" y="-5.5" width="36" height="11" rx="5.5" fill="#34d399"/>
+        <rect x="-5.5" y="-18" width="11" height="36" rx="5.5" fill="#34d399"/>
     </g>
+    <rect x="156" y="318" width="46" height="12" rx="6" fill="#10b981"/>
+    <rect x="173" y="301" width="12" height="46" rx="6" fill="#10b981"/>
+    <rect x="310" y="308" width="46" height="11" rx="5.5" fill="#ffffff"/>
+    <rect x="310" y="327" width="46" height="11" rx="5.5" fill="#ffffff"/>
 </svg>

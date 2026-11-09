@@ -1,13 +1,13 @@
 {
   "name": "Fayd Time — Калькулятор рассрочки",
   "short_name": "Fayd Time",
-  "description": "Удобный и прозрачный калькулятор исламской рассрочки Fayd Time",
+  "description": "Удобный и точный калькулятор рассрочки Fayd Time с графиком платежей и гибким взносом",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a140f",
-  "theme_color": "#0a140f",
+  "background_color": "#074129",
+  "theme_color": "#074129",
   "icons": [
     {
       "src": "icon-192.png",
