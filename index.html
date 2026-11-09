@@ -46,13 +46,16 @@
     <script>
         (function() {
             var saved = localStorage.getItem('fayd_theme') || 'dark';
+            var meta = document.getElementById('theme-color-meta');
             if (saved === 'light') {
                 document.documentElement.classList.remove('dark');
-                var meta = document.getElementById('theme-color-meta');
+                document.documentElement.style.colorScheme = 'light';
+                document.documentElement.style.backgroundColor = '#eaeaea';
                 if (meta) meta.setAttribute('content', '#e0e0e0');
             } else {
                 document.documentElement.classList.add('dark');
-                var meta = document.getElementById('theme-color-meta');
+                document.documentElement.style.colorScheme = 'dark';
+                document.documentElement.style.backgroundColor = '#03150d';
                 if (meta) meta.setAttribute('content', '#074129');
             }
         })();
@@ -124,15 +127,46 @@
             --track-unfilled: rgba(255, 255, 255, 0.22);
         }
 
+        html {
+            background-color: #eaeaea;
+            color-scheme: light;
+            min-height: 100%;
+            min-height: -webkit-fill-available;
+            min-height: 100dvh;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        html.dark {
+            background-color: #03150d;
+            color-scheme: dark;
+        }
+
         body {
-            background: var(--bg-page);
-            background-attachment: fixed;
+            background-color: #eaeaea;
+            background-image: var(--bg-page);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: scroll;
             color: var(--text-heading);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
+            min-height: -webkit-fill-available;
+            min-height: 100dvh;
+            transition: background-color 0.3s ease, color 0.3s ease;
             position: relative;
             overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        html.dark body {
+            background-color: #03150d;
+        }
+
+        /* Desktop: smooth fixed background */
+        @media (min-width: 1024px) {
+            body {
+                background-attachment: fixed;
+            }
         }
 
         /* Glassmorphism Cards */
@@ -554,7 +588,7 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="w-full max-w-[1672px] mx-auto px-4 sm:px-6 md:px-8 xl:px-12 2xl:px-[124px] pt-2 sm:pt-3 lg:pt-4 pb-10">
+    <main class="w-full max-w-[1672px] mx-auto px-4 sm:px-6 md:px-8 xl:px-12 2xl:px-[124px] pt-2 sm:pt-3 lg:pt-4 pb-12 sm:pb-14" style="padding-bottom: max(3rem, calc(2.2rem + env(safe-area-inset-bottom, 0px)));">
 
         <!-- Title & Mode Tabs Switcher -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 sm:mb-4">
@@ -1128,10 +1162,16 @@
             const meta = document.getElementById('theme-color-meta');
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
+                document.documentElement.style.backgroundColor = '#03150d';
+                document.documentElement.style.colorScheme = 'dark';
+                if (document.body) document.body.style.backgroundColor = '#03150d';
                 localStorage.setItem('fayd_theme', 'dark');
                 if (meta) meta.setAttribute('content', '#074129');
             } else {
                 document.documentElement.classList.remove('dark');
+                document.documentElement.style.backgroundColor = '#eaeaea';
+                document.documentElement.style.colorScheme = 'light';
+                if (document.body) document.body.style.backgroundColor = '#eaeaea';
                 localStorage.setItem('fayd_theme', 'light');
                 if (meta) meta.setAttribute('content', '#e0e0e0');
             }
