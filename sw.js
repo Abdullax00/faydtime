@@ -1,11 +1,10 @@
-const CACHE_NAME = 'faydtime-calc-v2.0.1';
+const CACHE_NAME = 'faydtime-calc-v2.1.0';
 const CDN_CACHE = 'faydtime-cdn-v1';
 
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './CNAME',
   './apple-touch-icon.png',
   './favicon-32x32.png',
   './favicon-16x16.png',
@@ -14,32 +13,15 @@ const STATIC_ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './og-image.png',
-  './assets/bg_dark.svg',
-  './assets/bg_light.svg',
-  './assets/btn_calendar_dark.svg',
-  './assets/btn_calendar_light.svg',
-  './assets/btn_pdf_dark.svg',
-  './assets/btn_pdf_light.svg',
-  './assets/button_icon_dark.svg',
-  './assets/button_icon_light.svg',
-  './assets/calendar.svg',
-  './assets/calendar_figma.svg',
-  './assets/copy.svg',
-  './assets/export_dark.png',
-  './assets/export_light.png',
-  './assets/logo.svg',
-  './assets/logo_dark.svg',
-  './assets/logo_light.svg',
-  './assets/moon.svg',
   './assets/moon_button.svg',
-  './assets/pencil.svg',
-  './assets/pie.svg',
-  './assets/pie_figma.svg',
-  './assets/sun.svg',
   './assets/sun_figma.svg',
-  './assets/theme_btn_dark.svg',
-  './assets/trend.svg',
-  './assets/trend_figma.svg'
+  './assets/calendar_figma.svg',
+  './assets/trend_figma.svg',
+  './assets/pie_figma.svg',
+  './assets/button_icon_light.svg',
+  './assets/button_icon_dark.svg',
+  './assets/btn_calendar_light.svg',
+  './assets/btn_calendar_dark.svg'
 ];
 
 self.addEventListener('install', (event) => {

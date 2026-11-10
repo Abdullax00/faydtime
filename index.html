@@ -85,6 +85,10 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'theme-heading': 'var(--text-heading)',
+                        'theme-sub': 'var(--text-sub)',
                     }
                 }
             }
@@ -141,6 +145,14 @@
             --track-unfilled: #c4c4c4;
             color-scheme: light;
             background-color: #eaeaea;
+        }
+
+        .text-theme-heading {
+            color: var(--text-heading) !important;
+        }
+
+        .text-theme-sub {
+            color: var(--text-sub) !important;
         }
 
         html {
@@ -599,6 +611,20 @@
         /* Print Styles */
         .print-only { display: none !important; }
         @media print {
+            @page {
+                size: portrait;
+                margin: 10mm 12mm;
+            }
+            html, body {
+                background: #ffffff !important;
+                background-image: none !important;
+                color: #000000 !important;
+                min-height: auto !important;
+                height: auto !important;
+                overflow: visible !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             body > *:not(#print-sheet) { display: none !important; }
             #print-sheet.print-only { display: block !important; }
         }
@@ -682,22 +708,22 @@
 
                         <!-- Slider -->
                         <div class="py-1">
-                            <input type="range" id="price-slider" min="25000" max="100000" step="1000" value="100000">
+                            <input type="range" id="price-slider" min="25000" max="3000000" step="1000" value="100000" aria-label="Стоимость товара">
                         </div>
 
                         <!-- Min & Max Labels -->
                         <div class="flex items-center justify-between text-[11px] sm:text-[12.5px] font-medium text-theme-sub mt-1">
                             <span>25 000 ₽</span>
-                            <span id="price-max-label">100 000 ₽</span>
+                            <span id="price-max-label">3 000 000 ₽</span>
                         </div>
                     </div>
 
                     <!-- Preset Chips (4 equal symmetrical columns) -->
                     <div id="price-presets-container" class="grid grid-cols-4 gap-1.5 sm:gap-2 pt-1.5 mt-2">
-                        <button type="button" onclick="setPresetPrice(25000)" class="figma-chip">25 000 ₽</button>
                         <button type="button" onclick="setPresetPrice(50000)" class="figma-chip">50 000 ₽</button>
-                        <button type="button" onclick="setPresetPrice(75000)" class="figma-chip">75 000 ₽</button>
                         <button type="button" onclick="setPresetPrice(100000)" class="figma-chip active">100 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(500000)" class="figma-chip">500 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(1000000)" class="figma-chip">1 000 000 ₽</button>
                     </div>
                 </div>
 
@@ -723,7 +749,7 @@
 
                         <!-- Slider -->
                         <div class="py-1">
-                            <input type="range" id="term-slider" min="3" max="12" step="1" value="12">
+                            <input type="range" id="term-slider" min="3" max="12" step="1" value="12" aria-label="Количество месяцев рассрочки">
                         </div>
 
                         <!-- Min & Max Labels -->
@@ -765,7 +791,7 @@
 
                     <!-- Slider -->
                     <div class="py-1">
-                        <input type="range" id="down-slider" min="34500" max="117300" step="1" value="34500">
+                        <input type="range" id="down-slider" min="34500" max="117300" step="1" value="34500" aria-label="Сумма первоначального взноса">
                     </div>
 
                     <!-- Min & Max Labels -->
@@ -922,31 +948,35 @@
 
     <!-- Print Sheet for PDF Export -->
     <div id="print-sheet" class="print-only">
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #000;">
-            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #004024; padding-bottom: 10px; margin-bottom: 15px;">
+        <div style="font-family: Arial, sans-serif; padding: 24px; color: #111; max-width: 800px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #004024; padding-bottom: 12px; margin-bottom: 16px;">
                 <div>
-                    <h1 style="font-size: 20px; font-weight: 800; margin: 0; color: #004024;">Fayd Time</h1>
-                    <p style="font-size: 11px; color: #555; margin: 4px 0 0;">Калькулятор рассрочки</p>
+                    <h1 style="font-size: 22px; font-weight: 800; margin: 0; color: #004024; letter-spacing: -0.5px;">Fayd Time</h1>
+                    <p style="font-size: 12px; color: #555; margin: 4px 0 0;">Калькулятор рассрочки</p>
                 </div>
-                <div style="text-align: right; font-size: 11px; color: #555;">
-                    <div>Сформировано: <span id="print-gen-date"></span></div>
+                <div style="text-align: right; font-size: 11px; color: #666; line-height: 1.5;">
+                    <div>Дата формирования: <strong id="print-gen-date" style="color: #111;"></strong></div>
+                    <div>Режим: <strong id="print-mode-label" style="color: #111;">Со взносом</strong></div>
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #f8fafc; padding: 10px; border: 1px solid #ddd; margin-bottom: 15px; font-size: 11px;">
-                <div>Товар: <strong id="print-sum-price">100 000 ₽</strong></div>
-                <div id="print-down-row">Взнос: <strong id="print-sum-down">34 500 ₽</strong></div>
-                <div>Срок: <strong id="print-sum-term">12 мес.</strong></div>
-                <div>Платеж: <strong id="print-sum-monthly">8 625 ₽</strong></div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 16px; font-size: 11.5px;">
+                <div style="padding: 4px 6px;">Стоимость покупки: <br><strong id="print-sum-price" style="font-size: 13.5px; color: #004024;">100 000 ₽</strong></div>
+                <div id="print-down-row" style="padding: 4px 6px;">Первоначальный взнос: <br><strong id="print-sum-down" style="font-size: 13.5px; color: #004024;">34 500 ₽ (25%)</strong></div>
+                <div style="padding: 4px 6px;">Срок рассрочки: <br><strong id="print-sum-term" style="font-size: 13.5px; color: #004024;">12 мес.</strong></div>
+                <div style="padding: 4px 6px;">Торговая наценка: <br><strong id="print-sum-markup" style="font-size: 13.5px; color: #111;">38 000 ₽</strong></div>
+                <div style="padding: 4px 6px;">Итоговая стоимость: <br><strong id="print-sum-total" style="font-size: 13.5px; color: #004024;">138 000 ₽</strong></div>
+                <div style="padding: 4px 6px;">Ежемесячный платёж: <br><strong id="print-sum-monthly" style="font-size: 13.5px; color: #004024;">8 625 ₽</strong></div>
             </div>
 
+            <h3 style="font-size: 13px; font-weight: 700; color: #004024; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">График платежей</h3>
             <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                 <thead>
                     <tr style="background: #004024; color: white;">
-                        <th style="padding: 6px; border: 1px solid #004024; text-align: left;">№</th>
-                        <th style="padding: 6px; border: 1px solid #004024; text-align: left;">Дата платежа</th>
-                        <th style="padding: 6px; border: 1px solid #004024; text-align: right;">Сумма</th>
-                        <th style="padding: 6px; border: 1px solid #004024; text-align: right;">Остаток</th>
+                        <th style="padding: 6px 8px; border: 1px solid #004024; text-align: left; width: 40px;">№</th>
+                        <th style="padding: 6px 8px; border: 1px solid #004024; text-align: left;">Дата платежа</th>
+                        <th style="padding: 6px 8px; border: 1px solid #004024; text-align: right;">Сумма платежа</th>
+                        <th style="padding: 6px 8px; border: 1px solid #004024; text-align: right;">Остаток долга</th>
                     </tr>
                 </thead>
                 <tbody id="print-table-body">
@@ -954,7 +984,7 @@
                 </tbody>
             </table>
 
-            <div style="margin-top: 15px; font-size: 10px; color: #777; text-align: center;">
+            <div style="margin-top: 16px; padding-top: 8px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #777; text-align: center;">
                 Расчёты носят исключительно справочно-информационный характер
             </div>
         </div>
@@ -1077,22 +1107,40 @@
             });
         }
 
+        function updatePricePresets(withDown) {
+            const container = document.getElementById('price-presets-container');
+            if (!container) return;
+            if (withDown) {
+                container.innerHTML = `
+                    <button type="button" onclick="setPresetPrice(50000)" class="figma-chip">50 000 ₽</button>
+                    <button type="button" onclick="setPresetPrice(100000)" class="figma-chip">100 000 ₽</button>
+                    <button type="button" onclick="setPresetPrice(500000)" class="figma-chip">500 000 ₽</button>
+                    <button type="button" onclick="setPresetPrice(1000000)" class="figma-chip">1 000 000 ₽</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button type="button" onclick="setPresetPrice(25000)" class="figma-chip">25 000 ₽</button>
+                    <button type="button" onclick="setPresetPrice(50000)" class="figma-chip">50 000 ₽</button>
+                    <button type="button" onclick="setPresetPrice(75000)" class="figma-chip">75 000 ₽</button>
+                    <button type="button" onclick="setPresetPrice(100000)" class="figma-chip">100 000 ₽</button>
+                `;
+            }
+            highlightChips();
+        }
+
         function updateCalculator(updatePrice = true, updateDown = true, updateTerm = true, resetDownToMin = false, immediate = false) {
             const price = currentPrice;
             const months = currentTerm;
 
-            if (updatePrice && document.activeElement !== priceInput) {
+            if (updatePrice && (isSliderActive || document.activeElement !== priceInput)) {
                 priceInput.value = price.toLocaleString('ru-RU');
             }
-            if (updateTerm && document.activeElement !== termInput) {
+            if (updateTerm && (isSliderActive || document.activeElement !== termInput)) {
                 termInput.value = months;
             }
 
-            // Adjust slider max dynamically
-            let currentSliderMax = 100000;
-            if (isWithDownPayment && price > 100000) {
-                currentSliderMax = MAX_PRICE;
-            }
+            // Set slider max strictly based on mode
+            const currentSliderMax = isWithDownPayment ? MAX_PRICE : MAX_PRICE_NO_DOWN;
             priceSlider.max = currentSliderMax;
             priceMaxLabel.innerText = `${currentSliderMax.toLocaleString('ru-RU')} ₽`;
             priceSlider.value = Math.min(price, currentSliderMax);
@@ -1113,7 +1161,6 @@
                 downMinLabel.innerText = `${minDown.toLocaleString('ru-RU')} ₽ (25%)`;
                 downMaxLabel.innerText = `${maxDown.toLocaleString('ru-RU')} ₽ (85%)`;
 
-                // If reset requested or previous down payment was at the minimum, scale to new minimum
                 if (resetDownToMin || currentDown === 0 || currentDown === prevMinDown || currentDown < minDown) {
                     currentDown = minDown;
                 } else if (currentDown > maxDown) {
@@ -1124,7 +1171,7 @@
                 downSlider.value = currentDown;
                 down = currentDown;
 
-                if (updateDown && document.activeElement !== downInput) {
+                if (updateDown && (isSliderActive || document.activeElement !== downInput)) {
                     downInput.value = down.toLocaleString('ru-RU');
                 }
             } else {
@@ -1132,7 +1179,7 @@
                 down = 0;
             }
 
-            const principal = total - down;
+            const principal = Math.max(0, total - down);
             const monthly = Math.round(principal / months);
 
             animateValue(markupEl, markup, ' ₽', immediate);
@@ -1154,6 +1201,7 @@
                 tabWithDown.classList.add('active');
                 tabNoDown.classList.remove('active');
                 downPaymentWrapper.classList.add('expanded');
+                updatePricePresets(true);
                 updateCalculator(true, true, true, true, true);
             } else {
                 tabSlider.classList.add('is-right');
@@ -1163,6 +1211,7 @@
                 if (currentPrice > MAX_PRICE_NO_DOWN) {
                     currentPrice = MAX_PRICE_NO_DOWN;
                 }
+                updatePricePresets(false);
                 updateCalculator(true, true, true, false, true);
             }
         }
@@ -1172,13 +1221,14 @@
                 setDownPaymentMode(true);
             }
             currentPrice = val;
+            priceSlider.value = val;
             updateCalculator(true, true, false, true, true);
         }
 
         function setPresetTerm(val) {
             currentTerm = val;
             termSlider.value = val;
-            updateCalculator(false, true, true, true, true);
+            updateCalculator(false, true, true, false, true);
         }
 
         function highlightChips() {
@@ -1205,14 +1255,29 @@
             });
         }
 
-        // Input Listeners (120 FPS Coalesced Pipeline)
-        priceSlider.addEventListener('input', (e) => {
-            currentPrice = parseInt(e.target.value, 10);
-            if (document.activeElement !== priceInput) {
-                priceInput.value = currentPrice.toLocaleString('ru-RU');
+        // Input Listeners & Touch Protection (120 FPS Coalesced Pipeline)
+        let isSliderActive = false;
+        let priceBeforeEdit = currentPrice;
+        let termBeforeEdit = currentTerm;
+        let downBeforeEdit = currentDown;
+
+        function blurActiveInput() {
+            if (document.activeElement && document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'text') {
+                try { document.activeElement.blur(); } catch (e) {}
             }
+        }
+
+        priceSlider.addEventListener('input', (e) => {
+            isSliderActive = true;
+            currentPrice = parseInt(e.target.value, 10);
+            priceInput.value = currentPrice.toLocaleString('ru-RU');
             updateSliderTrack(priceSlider);
             queueSliderUpdate(false, true, false, false);
+        });
+
+        priceInput.addEventListener('focus', () => {
+            priceBeforeEdit = currentPrice;
+            priceInput.select();
         });
 
         priceInput.addEventListener('input', (e) => {
@@ -1226,17 +1291,27 @@
         });
 
         priceInput.addEventListener('blur', () => {
+            if (isSliderActive) {
+                priceInput.value = currentPrice.toLocaleString('ru-RU');
+                return;
+            }
             if (currentPrice < MIN_PRICE) currentPrice = MIN_PRICE;
+            const maxVal = isWithDownPayment ? MAX_PRICE : MAX_PRICE_NO_DOWN;
+            if (currentPrice > maxVal) currentPrice = maxVal;
             updateCalculator(true, true, false, false, true);
         });
 
         termSlider.addEventListener('input', (e) => {
+            isSliderActive = true;
             currentTerm = parseInt(e.target.value, 10);
-            if (document.activeElement !== termInput) {
-                termInput.value = currentTerm;
-            }
+            termInput.value = currentTerm;
             updateSliderTrack(termSlider);
             queueSliderUpdate(false, true, false, false);
+        });
+
+        termInput.addEventListener('focus', () => {
+            termBeforeEdit = currentTerm;
+            termInput.select();
         });
 
         termInput.addEventListener('input', (e) => {
@@ -1244,46 +1319,63 @@
             if (!raw) return;
             let val = parseInt(raw, 10);
             if (val > 12) val = 12;
-            if (val < 3 && val > 0) val = 3;
             currentTerm = val;
-            termSlider.value = val;
+            termSlider.value = Math.max(3, Math.min(12, val));
             updateCalculator(false, true, false, false, true);
         });
 
         termInput.addEventListener('blur', () => {
+            if (isSliderActive) {
+                termInput.value = currentTerm;
+                return;
+            }
             if (currentTerm < 3) currentTerm = 3;
             if (currentTerm > 12) currentTerm = 12;
             updateCalculator(false, true, true, false, true);
         });
 
         downSlider.addEventListener('input', (e) => {
+            isSliderActive = true;
             currentDown = parseInt(e.target.value, 10);
-            if (document.activeElement !== downInput) {
-                downInput.value = currentDown.toLocaleString('ru-RU');
-            }
+            downInput.value = currentDown.toLocaleString('ru-RU');
             updateSliderTrack(downSlider);
             queueSliderUpdate(false, false, false, false);
+        });
+
+        downInput.addEventListener('focus', () => {
+            downBeforeEdit = currentDown;
+            downInput.select();
         });
 
         downInput.addEventListener('input', (e) => {
             const raw = e.target.value.replace(/\D/g, '');
             if (!raw) return;
-            currentDown = parseInt(raw, 10);
-            updateCalculator(false, false, false, false);
+            let val = parseInt(raw, 10);
+            const rate = getInterpolatedRate(currentTerm, isWithDownPayment);
+            const total = currentPrice + Math.round(currentPrice * rate);
+            const maxDown = Math.round(total * 0.85);
+            if (val > maxDown) val = maxDown;
+            currentDown = val;
+            const minDown = Math.ceil(total * 0.25);
+            downSlider.value = Math.max(minDown, Math.min(maxDown, val));
+            updateCalculator(false, false, false, false, true);
         });
 
         downInput.addEventListener('blur', () => {
+            if (isSliderActive) {
+                downInput.value = currentDown.toLocaleString('ru-RU');
+                return;
+            }
+            const rate = getInterpolatedRate(currentTerm, isWithDownPayment);
+            const total = currentPrice + Math.round(currentPrice * rate);
+            const minDown = Math.ceil(total * 0.25);
+            const maxDown = Math.round(total * 0.85);
+            if (currentDown < minDown) currentDown = minDown;
+            if (currentDown > maxDown) currentDown = maxDown;
             updateCalculator(false, true, false, false, true);
         });
 
-        // iOS Safari & Mobile Touch Protection Layer
-        let isSliderActive = false;
-        function blurActiveInput() {
-            if (document.activeElement && document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'text') {
-                document.activeElement.blur();
-            }
-        }
-
+        // Touch & Pointer Protection
         [priceSlider, termSlider, downSlider].forEach(slider => {
             slider.addEventListener('pointerdown', () => { isSliderActive = true; blurActiveInput(); }, { passive: true });
             slider.addEventListener('touchstart', () => { isSliderActive = true; blurActiveInput(); }, { passive: true });
@@ -1292,6 +1384,7 @@
 
         window.addEventListener('pointerup', () => { isSliderActive = false; }, { passive: true });
         window.addEventListener('touchend', () => { isSliderActive = false; }, { passive: true });
+        window.addEventListener('touchcancel', () => { isSliderActive = false; }, { passive: true });
         window.addEventListener('mouseup', () => { isSliderActive = false; });
 
         // Commit and dismiss keyboard on Enter
@@ -1339,7 +1432,7 @@
             updateSliderTrack(downSlider);
         }
 
-        // Toast
+        // Toast Notification
         let toastTimeout = null;
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -1353,6 +1446,54 @@
             }, 2500);
         }
 
+        // Single Source of Truth for Schedule Calculations & Dates
+        function generateScheduleData() {
+            const price = currentPrice;
+            const months = currentTerm;
+            const rate = getInterpolatedRate(months, isWithDownPayment);
+            const markup = Math.round(price * rate);
+            const total = price + markup;
+            const down = isWithDownPayment ? currentDown : 0;
+            const downPercent = total > 0 ? Math.round((down / total) * 100) : 0;
+            const principal = Math.max(0, total - down);
+            const monthly = Math.round(principal / months);
+
+            const rows = [];
+            let remaining = principal;
+            const now = new Date();
+            const targetDay = now.getDate();
+
+            for (let i = 1; i <= months; i++) {
+                const payDate = new Date(now.getFullYear(), now.getMonth() + i, targetDay);
+                if (payDate.getDate() !== targetDay) {
+                    payDate.setDate(0); // Clamps to last day of target month (prevents Jan 31 -> Mar 3 overflow)
+                }
+                const dateStr = payDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const currentPay = (i === months) ? remaining : monthly;
+                remaining = Math.max(0, remaining - currentPay);
+
+                rows.push({
+                    num: i,
+                    date: dateStr,
+                    payment: currentPay,
+                    remaining: remaining
+                });
+            }
+
+            return {
+                price,
+                months,
+                rate,
+                markup,
+                total,
+                down,
+                downPercent,
+                principal,
+                monthly,
+                rows
+            };
+        }
+
         // Schedule Modal
         function openScheduleModal() {
             const modal = document.getElementById('schedule-modal');
@@ -1364,46 +1505,31 @@
             const sumMonthly = document.getElementById('modal-summary-monthly');
             const sumTotal = document.getElementById('modal-summary-total');
 
-            const price = currentPrice;
-            const months = currentTerm;
-            const rate = getInterpolatedRate(months, isWithDownPayment);
-            const markup = Math.round(price * rate);
-            const total = price + markup;
-            const down = isWithDownPayment ? currentDown : 0;
-            const principal = total - down;
-            const monthly = Math.round(principal / months);
+            const data = generateScheduleData();
 
-            subtitle.innerText = `Рассчитан на ${months} ${months === 1 ? 'месяц' : months < 5 ? 'месяца' : 'месяцев'}`;
-            sumPrice.innerText = `${price.toLocaleString('ru-RU')} ₽`;
-            sumTotal.innerText = `${total.toLocaleString('ru-RU')} ₽`;
-            sumMonthly.innerText = `${monthly.toLocaleString('ru-RU')} ₽`;
+            subtitle.innerText = `Рассчитан на ${data.months} ${data.months === 1 ? 'месяц' : data.months < 5 ? 'месяца' : 'месяцев'}`;
+            sumPrice.innerText = `${data.price.toLocaleString('ru-RU')} ₽`;
+            sumTotal.innerText = `${data.total.toLocaleString('ru-RU')} ₽`;
+            sumMonthly.innerText = `${data.monthly.toLocaleString('ru-RU')} ₽`;
 
             if (isWithDownPayment) {
                 sumDownWrap.style.display = 'block';
-                sumDown.innerText = `${down.toLocaleString('ru-RU')} ₽`;
+                sumDown.innerText = `${data.down.toLocaleString('ru-RU')} ₽ (${data.downPercent}%)`;
             } else {
                 sumDownWrap.style.display = 'none';
             }
 
             tbody.innerHTML = '';
-            let remaining = principal;
-            const now = new Date();
-
-            for (let i = 1; i <= months; i++) {
-                const payDate = new Date(now.getFullYear(), now.getMonth() + i, now.getDate());
-                const dateStr = payDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const currentPay = (i === months) ? remaining : monthly;
-                remaining = Math.max(0, remaining - currentPay);
-
+            data.rows.forEach(r => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${i}</td>
-                    <td>${dateStr}</td>
-                    <td class="text-right font-semibold">${currentPay.toLocaleString('ru-RU')} ₽</td>
-                    <td class="text-right text-theme-sub">${remaining.toLocaleString('ru-RU')} ₽</td>
+                    <td>${r.num}</td>
+                    <td>${r.date}</td>
+                    <td class="text-right font-semibold">${r.payment.toLocaleString('ru-RU')} ₽</td>
+                    <td class="text-right text-theme-sub">${r.remaining.toLocaleString('ru-RU')} ₽</td>
                 `;
                 tbody.appendChild(tr);
-            }
+            });
 
             modal.classList.add('active');
         }
@@ -1413,114 +1539,113 @@
             if (modal) modal.classList.remove('active');
         }
 
+        // Robust Clipboard with Fallback
+        function copyTextToClipboard(text, successMsg) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(successMsg);
+                }).catch(() => {
+                    fallbackCopy(text, successMsg);
+                });
+            } else {
+                fallbackCopy(text, successMsg);
+            }
+        }
+
+        function fallbackCopy(text, successMsg) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                ta.style.top = '-9999px';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                if (ok) {
+                    showToast(successMsg);
+                } else {
+                    showToast('Ошибка при копировании');
+                }
+            } catch (err) {
+                showToast('Не удалось скопировать');
+            }
+        }
+
         // Copy Calculation Summary
         function copyCalculationSummary() {
-            const price = currentPrice;
-            const months = currentTerm;
-            const rate = getInterpolatedRate(months, isWithDownPayment);
-            const markup = Math.round(price * rate);
-            const total = price + markup;
-            const down = isWithDownPayment ? currentDown : 0;
-            const principal = total - down;
-            const monthly = Math.round(principal / months);
-
+            const data = generateScheduleData();
             let text = `Калькулятор Fayd Time\n`;
             text += `Режим: ${isWithDownPayment ? 'Со взносом' : 'Без взноса'}\n`;
-            text += `Стоимость товара: ${price.toLocaleString('ru-RU')} ₽\n`;
-            text += `Срок рассрочки: ${months} мес.\n`;
+            text += `Стоимость товара: ${data.price.toLocaleString('ru-RU')} ₽\n`;
+            text += `Срок рассрочки: ${data.months} мес.\n`;
             if (isWithDownPayment) {
-                text += `Первоначальный взнос: ${down.toLocaleString('ru-RU')} ₽\n`;
+                text += `Первоначальный взнос: ${data.down.toLocaleString('ru-RU')} ₽ (${data.downPercent}%)\n`;
             }
-            text += `Торговая наценка: ${markup.toLocaleString('ru-RU')} ₽\n`;
-            text += `Итоговая стоимость: ${total.toLocaleString('ru-RU')} ₽\n`;
-            text += `Ежемесячный платёж: ${monthly.toLocaleString('ru-RU')} ₽\n`;
+            text += `Торговая наценка: ${data.markup.toLocaleString('ru-RU')} ₽\n`;
+            text += `Итоговая стоимость: ${data.total.toLocaleString('ru-RU')} ₽\n`;
+            text += `Ежемесячный платёж: ${data.monthly.toLocaleString('ru-RU')} ₽\n`;
 
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Расчёт скопирован в буфер!');
-            }).catch(() => {
-                showToast('Ошибка при копировании');
-            });
+            copyTextToClipboard(text, 'Расчёт скопирован в буфер!');
         }
 
         function copyScheduleText() {
-            const price = currentPrice;
-            const months = currentTerm;
-            const rate = getInterpolatedRate(months, isWithDownPayment);
-            const markup = Math.round(price * rate);
-            const total = price + markup;
-            const down = isWithDownPayment ? currentDown : 0;
-            const principal = total - down;
-            const monthly = Math.round(principal / months);
-
+            const data = generateScheduleData();
             let text = `График платежей Fayd Time\n`;
-            text += `Товар: ${price.toLocaleString('ru-RU')} ₽ | Срок: ${months} мес. | Итого: ${total.toLocaleString('ru-RU')} ₽\n\n`;
-
-            let remaining = principal;
-            const now = new Date();
-
-            for (let i = 1; i <= months; i++) {
-                const payDate = new Date(now.getFullYear(), now.getMonth() + i, now.getDate());
-                const dateStr = payDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const currentPay = (i === months) ? remaining : monthly;
-                remaining = Math.max(0, remaining - currentPay);
-                text += `${i}. ${dateStr} — ${currentPay.toLocaleString('ru-RU')} ₽ (остаток: ${remaining.toLocaleString('ru-RU')} ₽)\n`;
+            text += `Товар: ${data.price.toLocaleString('ru-RU')} ₽ | Срок: ${data.months} мес. | Итого: ${data.total.toLocaleString('ru-RU')} ₽\n`;
+            if (isWithDownPayment) {
+                text += `Взнос: ${data.down.toLocaleString('ru-RU')} ₽ (${data.downPercent}%)\n`;
             }
+            text += `\n`;
 
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('График скопирован!');
+            data.rows.forEach(r => {
+                text += `${r.num}. ${r.date} — ${r.payment.toLocaleString('ru-RU')} ₽ (остаток: ${r.remaining.toLocaleString('ru-RU')} ₽)\n`;
             });
+
+            copyTextToClipboard(text, 'График скопирован!');
         }
 
         // PDF Print Export
         function saveAsPDF() {
-            const price = currentPrice;
-            const months = currentTerm;
-            const rate = getInterpolatedRate(months, isWithDownPayment);
-            const markup = Math.round(price * rate);
-            const total = price + markup;
-            const down = isWithDownPayment ? currentDown : 0;
-            const principal = total - down;
-            const monthly = Math.round(principal / months);
+            const data = generateScheduleData();
 
             document.getElementById('print-gen-date').innerText = new Date().toLocaleDateString('ru-RU');
-            document.getElementById('print-sum-price').innerText = `${price.toLocaleString('ru-RU')} ₽`;
-            document.getElementById('print-sum-term').innerText = `${months} мес.`;
-            document.getElementById('print-sum-monthly').innerText = `${monthly.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('print-mode-label').innerText = isWithDownPayment ? 'Со взносом' : 'Без взноса';
+            document.getElementById('print-sum-price').innerText = `${data.price.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('print-sum-term').innerText = `${data.months} мес.`;
+            document.getElementById('print-sum-monthly').innerText = `${data.monthly.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('print-sum-markup').innerText = `${data.markup.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('print-sum-total').innerText = `${data.total.toLocaleString('ru-RU')} ₽`;
 
             const printDownRow = document.getElementById('print-down-row');
             if (isWithDownPayment) {
                 printDownRow.style.display = 'block';
-                document.getElementById('print-sum-down').innerText = `${down.toLocaleString('ru-RU')} ₽`;
+                document.getElementById('print-sum-down').innerText = `${data.down.toLocaleString('ru-RU')} ₽ (${data.downPercent}%)`;
             } else {
                 printDownRow.style.display = 'none';
             }
 
             const tbody = document.getElementById('print-table-body');
             tbody.innerHTML = '';
-            let remaining = principal;
-            const now = new Date();
-
-            for (let i = 1; i <= months; i++) {
-                const payDate = new Date(now.getFullYear(), now.getMonth() + i, now.getDate());
-                const dateStr = payDate.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const currentPay = (i === months) ? remaining : monthly;
-                remaining = Math.max(0, remaining - currentPay);
-
+            data.rows.forEach(r => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="padding: 6px; border: 1px solid #ddd;">${i}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd;">${dateStr}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd; text-align: right; font-weight: bold;">${currentPay.toLocaleString('ru-RU')} ₽</td>
-                    <td style="padding: 6px; border: 1px solid #ddd; text-align: right; color: #555;">${remaining.toLocaleString('ru-RU')} ₽</td>
+                    <td style="padding: 6px 8px; border: 1px solid #ddd;">${r.num}</td>
+                    <td style="padding: 6px 8px; border: 1px solid #ddd;">${r.date}</td>
+                    <td style="padding: 6px 8px; border: 1px solid #ddd; text-align: right; font-weight: bold;">${r.payment.toLocaleString('ru-RU')} ₽</td>
+                    <td style="padding: 6px 8px; border: 1px solid #ddd; text-align: right; color: #555;">${r.remaining.toLocaleString('ru-RU')} ₽</td>
                 `;
                 tbody.appendChild(tr);
-            }
+            });
 
             window.print();
         }
 
         // Initialize on DOM ready
         document.addEventListener('DOMContentLoaded', () => {
+            updatePricePresets(isWithDownPayment);
             updateCalculator(true, true, true, true, true);
         });
 
@@ -1567,17 +1692,9 @@
             }
         }, { passive: true });
     </script>
-    <!-- Service Worker Registration for Offline PWA with Instant Auto-Reload on Update -->
+    <!-- Service Worker Registration for Offline PWA -->
     <script>
         if ('serviceWorker' in navigator) {
-            let refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (!refreshing) {
-                    refreshing = true;
-                    window.location.reload();
-                }
-            });
-
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then((reg) => {
