@@ -6,6 +6,8 @@
     <meta id="color-scheme-meta" name="color-scheme" content="dark">
     <meta name="format-detection" content="telephone=no">
     <meta id="theme-color-meta" name="theme-color" content="#03150d">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#03150d">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#03150d">
     <title>Fayd Time — Калькулятор рассрочки</title>
 
     <!-- Favicon & PWA Icons -->
@@ -88,29 +90,8 @@
 
         <style>
         /* Exact Figma Design Tokens & Premium Glassmorphism */
+        /* Base: Dark by Default (eliminates Android Chrome light scrim mismatch) */
         :root {
-            --bg-page: radial-gradient(120% 100% at 50% 20%, #eaeaea 0%, #d8d8d8 55%, #c2c2c2 100%);
-            --text-heading: #000000;
-            --text-sub: #606060;
-            --card-glass: rgba(255, 255, 255, 0.40);
-            --card-border: rgba(255, 255, 255, 0.85);
-            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
-            --input-glass: rgba(255, 255, 255, 0.70);
-            --input-border: rgba(255, 255, 255, 0.95);
-            --input-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 5px rgba(0, 0, 0, 0.04);
-            --chip-bg: rgba(255, 255, 255, 0.45);
-            --chip-text: #000000;
-            --chip-border: rgba(255, 255, 255, 0.85);
-            --chip-active-bg: rgba(16, 185, 129, 0.16);
-            --chip-active-border: #10B981;
-            --chip-active-text: #047857;
-            --btn-glass: rgba(255, 255, 255, 0.45);
-            --btn-border: rgba(255, 255, 255, 0.85);
-            --btn-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.95);
-            --track-unfilled: #c4c4c4;
-        }
-
-        .dark {
             --bg-page: radial-gradient(120% 100% at 50% 20%, #164834 0%, #0c3323 55%, #03150d 100%);
             --text-heading: #ffffff;
             --text-sub: #b2c4bc;
@@ -130,11 +111,38 @@
             --btn-border: rgba(255, 255, 255, 0.16);
             --btn-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.18);
             --track-unfilled: rgba(255, 255, 255, 0.22);
+            color-scheme: dark;
+            background-color: #03150d;
+        }
+
+        /* Light Theme Overrides */
+        html:not(.dark) {
+            --bg-page: radial-gradient(120% 100% at 50% 20%, #eaeaea 0%, #d8d8d8 55%, #c2c2c2 100%);
+            --text-heading: #000000;
+            --text-sub: #606060;
+            --card-glass: rgba(255, 255, 255, 0.40);
+            --card-border: rgba(255, 255, 255, 0.85);
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+            --input-glass: rgba(255, 255, 255, 0.70);
+            --input-border: rgba(255, 255, 255, 0.95);
+            --input-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.95), 0 2px 5px rgba(0, 0, 0, 0.04);
+            --chip-bg: rgba(255, 255, 255, 0.45);
+            --chip-text: #000000;
+            --chip-border: rgba(255, 255, 255, 0.85);
+            --chip-active-bg: rgba(16, 185, 129, 0.16);
+            --chip-active-border: #10B981;
+            --chip-active-text: #047857;
+            --btn-glass: rgba(255, 255, 255, 0.45);
+            --btn-border: rgba(255, 255, 255, 0.85);
+            --btn-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+            --track-unfilled: #c4c4c4;
+            color-scheme: light;
+            background-color: #eaeaea;
         }
 
         html {
-            background-color: #eaeaea;
-            color-scheme: light;
+            background-color: #03150d;
+            color-scheme: dark;
             min-height: 100%;
             min-height: -webkit-fill-available;
             min-height: 100dvh;
@@ -146,13 +154,8 @@
             -ms-overflow-style: none;
         }
 
-        html.dark {
-            background-color: #03150d;
-            color-scheme: dark;
-        }
-
         body {
-            background-color: #eaeaea;
+            background-color: #03150d;
             background-image: var(--bg-page);
             background-repeat: no-repeat;
             background-size: cover;
@@ -173,8 +176,8 @@
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
-        html.dark body {
-            background-color: #03150d;
+        html:not(.dark) body {
+            background-color: #eaeaea;
         }
 
         /* Permanently eliminate native scrollbar lines across all mobile & desktop browsers */
@@ -1567,16 +1570,25 @@
             }
         }, { passive: true });
     </script>
-    <!-- Service Worker Registration for Offline PWA -->
+    <!-- Service Worker Registration for Offline PWA with Instant Auto-Reload on Update -->
     <script>
         if ('serviceWorker' in navigator) {
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
+            });
+
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then((reg) => {
-                        console.log('Fayd Time PWA: Service Worker registered successfully, scope:', reg.scope);
+                        console.log('Fayd Time PWA: Service Worker registered, scope:', reg.scope);
+                        reg.update();
                     })
                     .catch((err) => {
-                        console.log('Fayd Time PWA: Service Worker registration skipped or failed:', err);
+                        console.log('Fayd Time PWA: Service Worker registration skipped:', err);
                     });
             });
         }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'faydtime-calc-v1.3.0';
+const CACHE_NAME = 'faydtime-calc-v2.0.0';
 const CDN_CACHE = 'faydtime-cdn-v1';
 
 const STATIC_ASSETS = [
