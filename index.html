@@ -50,20 +50,23 @@
     <script>
         (function() {
             var saved = localStorage.getItem('fayd_theme') || 'dark';
-            var metaTheme = document.getElementById('theme-color-meta');
             var metaScheme = document.getElementById('color-scheme-meta');
-            if (saved === 'light') {
+            var isLight = saved === 'light';
+            var color = isLight ? '#eaeaea' : '#03150d';
+            if (isLight) {
                 document.documentElement.classList.remove('dark');
                 document.documentElement.style.colorScheme = 'light';
                 document.documentElement.style.backgroundColor = '#eaeaea';
-                if (metaTheme) metaTheme.setAttribute('content', '#eaeaea');
                 if (metaScheme) metaScheme.setAttribute('content', 'light');
             } else {
                 document.documentElement.classList.add('dark');
                 document.documentElement.style.colorScheme = 'dark';
                 document.documentElement.style.backgroundColor = '#03150d';
-                if (metaTheme) metaTheme.setAttribute('content', '#03150d');
                 if (metaScheme) metaScheme.setAttribute('content', 'dark');
+            }
+            var metas = document.querySelectorAll('meta[name="theme-color"]');
+            for (var i = 0; i < metas.length; i++) {
+                metas[i].setAttribute('content', color);
             }
         })();
     </script>
@@ -147,9 +150,7 @@
             min-height: -webkit-fill-available;
             min-height: 100dvh;
             -webkit-text-size-adjust: 100%;
-            overflow-x: hidden;
-            overscroll-behavior-y: none;
-            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -168,9 +169,6 @@
             min-height: 100dvh;
             transition: background-color 0.3s ease, color 0.3s ease;
             position: relative;
-            overflow-x: hidden;
-            overscroll-behavior-y: none;
-            overscroll-behavior: none;
             scrollbar-width: none;
             -ms-overflow-style: none;
             padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -1315,9 +1313,9 @@
         }
 
         function applyTheme(theme) {
-            const metaTheme = document.getElementById('theme-color-meta');
             const metaScheme = document.getElementById('color-scheme-meta');
             const bgCanvas = document.getElementById('fixed-bg-canvas');
+            const color = theme === 'dark' ? '#03150d' : '#eaeaea';
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
                 document.documentElement.style.backgroundColor = '#03150d';
@@ -1325,7 +1323,6 @@
                 if (document.body) document.body.style.backgroundColor = '#03150d';
                 if (bgCanvas) bgCanvas.style.backgroundColor = '#03150d';
                 localStorage.setItem('fayd_theme', 'dark');
-                if (metaTheme) metaTheme.setAttribute('content', '#03150d');
                 if (metaScheme) metaScheme.setAttribute('content', 'dark');
             } else {
                 document.documentElement.classList.remove('dark');
@@ -1334,9 +1331,9 @@
                 if (document.body) document.body.style.backgroundColor = '#eaeaea';
                 if (bgCanvas) bgCanvas.style.backgroundColor = '#eaeaea';
                 localStorage.setItem('fayd_theme', 'light');
-                if (metaTheme) metaTheme.setAttribute('content', '#eaeaea');
                 if (metaScheme) metaScheme.setAttribute('content', 'light');
             }
+            document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', color));
             updateSliderTrack(priceSlider);
             updateSliderTrack(termSlider);
             updateSliderTrack(downSlider);
