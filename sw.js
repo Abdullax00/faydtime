@@ -1,4 +1,4 @@
-const CACHE_NAME = 'faydtime-calc-v2.1.0';
+const CACHE_NAME = 'faydtime-calc-v2.1.1';
 const CDN_CACHE = 'faydtime-cdn-v1';
 
 const STATIC_ASSETS = [
@@ -13,6 +13,7 @@ const STATIC_ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './og-image.png',
+  './assets/logo_official.svg',
   './assets/moon_button.svg',
   './assets/sun_figma.svg',
   './assets/calendar_figma.svg',
